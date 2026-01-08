@@ -38,14 +38,14 @@ app.get('/allbooks', async (req,res) => {
 });
 
 //Create new book
-// app.post('/addbooks', async(req,res)=>{
-//     const {book_title, book_pic} = req.body;
-//     try{
-//         let connection = await mysql.createConnection({dbConfig});
-//         await connection.execute('INSERT INTO books(book_title, book_pic) VALUES(?,,?)', [book_title, book_pic]);
-//         res.status(201).json({message:'Book'+book_title+'added successfully'});
-//     }catch(err){
-//         console.log(err);
-//         res.status(500).json({message:'Server error - could not add card' + book_title});
-//     }
-// });
+app.post('/addbooks', async(req,res)=>{
+    const {book_title, book_pic} = req.body;
+    try{
+        let connection = await mysql.createConnection({dbConfig});
+        await connection.execute('INSERT INTO books(book_title, book_pic) VALUES(?,,?)', [book_title, book_pic]);
+        res.status(201).json({message:'Book'+book_title+'added successfully'});
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message:'Server error - could not add card' + book_title});
+    }
+});
