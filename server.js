@@ -38,10 +38,10 @@ app.get('/allbooks', async (req,res) => {
 });
 
 //Create new book
-app.post('/addbooks', async(req,res)=>{
+app.post('/addbook', async(req,res)=>{
     const {book_title, book_pic} = req.body;
     try{
-        let connection = await mysql.createConnection({dbConfig});
+        let connection = await mysql.createConnection(dbConfig);
         await connection.execute('INSERT INTO books(book_title, book_pic) VALUES(?,?)', [book_title, book_pic]);
         res.status(201).json({message:'Book'+book_title+'added successfully'});
     }catch(err){
@@ -54,7 +54,7 @@ app.post('/addbooks', async(req,res)=>{
 app.post('update/book', async(req,res)=>{
     const {book_title, book_pic, id} = req.body;
     try {
-        let connection = await mysql.createConnection({dbConfig});
+        let connection = await mysql.createConnection(dbConfig);
         await connection.execute(
             'UPDATE books SET book_title = ?, book_pic = ? WHERE id = ?',
             [book_title, book_pic, id]
