@@ -42,10 +42,45 @@ app.post('/addbooks', async(req,res)=>{
     const {book_title, book_pic} = req.body;
     try{
         let connection = await mysql.createConnection({dbConfig});
-        await connection.execute('INSERT INTO books(book_title, book_pic) VALUES(?,,?)', [book_title, book_pic]);
+        await connection.execute('INSERT INTO books(book_title, book_pic) VALUES(?,?)', [book_title, book_pic]);
         res.status(201).json({message:'Book'+book_title+'added successfully'});
     }catch(err){
         console.log(err);
         res.status(500).json({message:'Server error - could not add card' + book_title});
+    }
+});
+
+//Update book
+app.post('update/book', async(req,res)=>{
+    const {book_title, book_pic, id} = req.body;
+    try {
+        let connection = await mysql.createConnection({dbConfig});
+        await connection.execute(
+            'UPDATE books SET book_title = ?, book_pic = ? WHERE id = ?',
+            [book_title, book_pic, id]
+        );
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message:'Server error - could not update books'});
+    }
+});
+
+//Delete book
+app.delete('/deletebook', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const connection = await mysql.createConnection(dbConfig);
+        await connection.execute(
+            'DELETE FROM books WHERE id = ?',
+            [ id ]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Book not found" });
+        }
+        res.status(200).json({ message: "Book deleted successfully" });
+
+    } catch (error) {
+        res.status(500).json({message: "Error deleting book",});
     }
 });
