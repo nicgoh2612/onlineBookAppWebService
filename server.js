@@ -28,7 +28,7 @@ app.listen(port,() => {
  //Get all books
 app.get('/allbooks', async (req,res) => {
     try{
-        let connection = await mysql.createConnection(dbConfig);
+        let connection = await mysql.createConnection({dbConfig});
         const[rows] = await connection.execte('SELECT * FROM defaultdb.books');
         res.json(rows);
     } catch(err){
@@ -51,8 +51,9 @@ app.post('/addbook', async(req,res)=>{
 });
 
 //Update book
-app.post('update/book', async(req,res)=>{
-    const {book_title, book_pic, id} = req.body;
+app.put('updatebook/:id', async(req,res)=>{
+    const {id}  = req.params;
+    const {book_title, book_pic} = req.body;
     try {
         let connection = await mysql.createConnection(dbConfig);
         await connection.execute(
@@ -61,26 +62,19 @@ app.post('update/book', async(req,res)=>{
         );
     }catch(err){
         console.log(err);
-        res.status(500).json({message:'Server error - could not update books'});
+        res.status(500).json({message:'Server error - could not update books' + book_name});
     }
 });
 
 //Delete book
-app.delete('/deletebook', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const connection = await mysql.createConnection(dbConfig);
-        await connection.execute(
-            'DELETE FROM books WHERE id = ?',
-            [ id ]
-        );
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: "Book not found" });
-        }
-        res.status(200).json({ message: "Book deleted successfully" });
-
-    } catch (error) {
-        res.status(500).json({message: "Error deleting book",});
+app.delete("/deletebook/:id", async(req,res)=>{
+    const{id} = req.params;
+    try{
+        let connection = await mysql.createConnection(dbConfig);
+        await connection.execute('DELETE FROM books WHERE id=?'+id);
+        res.status(201).json({message: 'Book' + id+ 'deleted successfully'});
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message:'Server error - could not delete book' + id});
     }
-});
+})
